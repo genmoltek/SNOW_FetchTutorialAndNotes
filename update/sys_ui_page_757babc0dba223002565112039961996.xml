@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[jQuery('#addDog').click(function() {
+	var ga = new GlideAjax('fetchUtils');
+	ga.addParam('sysparm_name','createDog');  //This is the most critical line.  ITS NOT just a Reqeust Parameter that passes information.
+	                                          //This is essentially a REQUIRED field.  It tells the Server-Side what Function To Call..
+	                                          //     In this scenario, we are calling a Server Side Include named "fetchUtils"  (identifed by Constructor)
+	                                          //     and explicitly calling it's function "createDog()" identified by 'sysparm_name'
+	//The UDEMY Class states that 'sysparm_" IS A REQUIRED PREFIX for all Parameters that you want to pass
+	//You can pass as many of them as you like.. but they MUST use this PREFIX   'sysparm_"
+	//https://www.udemy.com/servicenow-201-development/learn/v4/t/lecture/7390440?start=0   timestamp approx 5min 7secs
+	
+	ga.addParam('sysparm_dog_name', JQuery('#dogName').val());
+	ga.addParam('sysparm_dog_age', JQuery('#dogAge').val());
+	ga.addParam('sysparm_dog_neutered', JQuery('#dogNeutered').is(':checked'));
+	ga.addParam('sysparm_dog_shots', JQuery('#dogShots').is(':checked'));
+	ga.getXML(fetchBallback);
+});
+
+function fetchBallback(response) {
+	var answer = response.responseXML.documentElement.getAttribute('answer').split('|');
+	JQuery('#msg').append('<p>' + answer[0] + ' has successfully been created. Dog ID: ' + answer[1] 
+					   + '</p> <br/> <a href="' + answer[2] + '">View new dog</a>');
+	
+	//Instead of building a HTML Popup.. we could directly update a field in the form with the Returned Result..
+	//g_form.setValue('some_field_name', answer);
+	//Anything starting with  'g_' is common practice for SNOW Globals.  APIs have Objects that are Globally Accessible. And Created by Default.
+	//'answer' seems to be a pre-defined variable that stores anything returned.
+	
+	//Udemy Online Class URL: https://www.udemy.com/servicenow-201-development/learn/v4/t/lecture/7390440?start=0  (approx 2:45 into lesson..)
+	//Shows annotation on the server-side section of the powerpoint slide that illustrates what the XML looks like...
+	// It shows  <xml  answer="Hello World!"  sysparm_max="15" sysparm_name="sayHello" sysparm_processor="<Constructor Arg> for GlideAjax" />
+	// So this 'should' be the XML Result that is returned to the Ajax Callback defined by  'fetchBallback(response)'
+	// The XML does NOT contains additional XML Elements.  It only has Attributes.. which makes sense in the code    .getAttribute('answer')
+	
+}]]></client_script>
+        <description/>
+        <direct>false</direct>
+        <endpoint>x_237223_fetch_Create Dog.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+
+	<h1> Add a new dog </h1>
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="dogName" class="col-sm-2 control-label">Name of dog:</label>
+			<div class="col-sm-4">
+				<input type="text" class="form-control" id="dogName" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="dogAge" class="col-sm-2 control-label">Age of dog:</label>
+			<div class="col-sm-4">
+				<input type="text" class="form-control" id="dogAge" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<div type="checkbox">
+					<label>
+						<input id="dogShots" type="checkbox" />
+						Shots
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<div type="checkbox">
+					<label>
+						<input id="dogNeutered" type="checkbox" />
+						Neutered
+					</label>
+				</div>
+			</div>
+		</div>
+	</form>
+	
+	<button id="addDog" class="btn btn-default">Add Dog</button>
+	
+	<div id="msg"></div>
+	
+	
+	
+</j:jelly>]]></html>
+        <name>Create Dog</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-12-18 18:30:20</sys_created_on>
+        <sys_id>757babc0dba223002565112039961996</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>Create Dog</sys_name>
+        <sys_package display_value="Fetch" source="x_237223_fetch">1e4b8440db22230025651120399619d3</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Fetch">1e4b8440db22230025651120399619d3</sys_scope>
+        <sys_update_name>sys_ui_page_757babc0dba223002565112039961996</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-12-20 18:21:15</sys_updated_on>
+    </sys_ui_page>
+</record_update>

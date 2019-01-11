@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_237223_fetch.fetchUtils</api_name>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>fetchUtils</name>
+        <script><![CDATA[var fetchUtils = Class.create();
+fetchUtils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+	createDog: function() {
+		//So to reiterate, when dealing with the GlideAjax API,  all request parameters are required to have PREFIX of  'sysparm_'
+		//And the only REQUIRED parameter is the 'sysparm_name' which specifies the Function in the Script Include to be called by Ajax.
+		//Keep in mind that invoking the Constructor for the GlideAjax class requires the name of Script Include.   
+		//Script Includes are always SERVER-SIDE code.  They can optionally be CALLED by CLIENT (if the check box above is marked.  'Client callable')
+		//Client-Callable ScriptIncludes are done from User Interface Forms (UI Pages)... or can be from Workflow Widgits that Run Scripts if AJAX !!
+		var dogName = this.getParameter('sysparm_dog_name');
+		var dogAge  = this.getParameter('sysparm_dog_age');
+		var dogShots = this.getParameter('sysparm_dog_shots');
+		var dogNeutured = this.getParameter('sysparm_dog_neutered');
+		
+		//TABLES are named with distinct pattern:    <UID for ServiceNow Instance> + _ + <YourAppName> + _ <YourTablename>
+		var newDog = new GlideRecord('x_237223_fetch_dogs');   //GlideRecord is a ServiceNow API that has some built-in global variables
+		                                                       //g_current is a globally accessible pointer to the current record.
+		                                                       //g_request and g_response are additional built-in globals  ( always available. ??)
+		newDog.newRecord();
+		newDog.name = dogName;
+		newDog.age = dogAge;
+		if(dogShots) {
+			newDog.shots = true;
+		}
+		if(dogNeutured) {
+			newDog.neutered = true;
+		}
+			
+		var dogNumber = newDog.number.getDisplayValue();
+		var sysID = newDog.insert();    //AFTER INSERT OF RECORD, Its Unique RECORD ID is RETURNED FOR Future Reference/Use.  
+		                                //Sys_ID is actual field in table (built-in)
+		
+		var dogLink = newDog.getLink(); //One of the things about SNOW APIs is that GlideRecords also allow direct access to a Record via URL.
+		                                //getLink() is building and returning a URL formatted String that can be used to directly access this Record.
+		                                //The returned Link can be displayed on a Form and if clicked, will open the Record Editor Form immediately.
+		//return values
+		return dogName + '|' + dogNumber + '|' + dogLink;
+	},
+	
+	createEmailNotification: function() {
+		var adopterEmail   = this.getParameter('sysparm_adopter_email');
+		var adoptionCenter = this.getParameter('sysparm_adoption_center');
+		var adoptionCenterEmail = '';
+		var ac = new GlideRecord('x_237223_adoption_center');
+		ac.get(adoptionCenter);
+		adoptionCenterEmail = ac.email.getDisplayValue();
+		//MISSING LINES OF CODE. SKIPPING AHEAD TO TRY AND FIGURE OUT WHERE ALL THESE PARAMETERS ARE KNOWN...
+	},
+	
+	type: 'fetchUtils'
+});
+
+
+//Script Includes:
+//Run on the Server-Side
+//Contain reusable bits of code (so can be modular)
+//Only executed from Client-Side-AJAX or Server-Side-'New JavaScript' operator
+//Can extend other JavaScript classes
+//To Use For AJAX:
+// -- must have 'client callable' set to 'True'
+// -- must extend "AbstractAjaxProcessor"  (this is a built-in Script-Include provided by SNOW which acts as a friendly API -- some useful functions)
+// -- must have "sysparm_name" with the String that matches function defined in Script Include
+// -- can access any client-side variable as long as it has PREFIX "sysparm_"
+// -- usually queries a table and returns records as JSON !!! (BUT ALWAYS CONTAINED WITHIN AN XML WRAPPER  '<xml ..... />' 
+// -- To Access the Returned Data from the AJAX Call...
+// --
+// -- Can Return XML or JSON....  (But DEPENDS on HOW the Script Include is Called on the Client-Side...)
+// --  You make the AJAX Call with two different (but similarly named XML functions)
+// --  TO RETURN XML FROM SCRIPT-INCLUDE
+// --  ========================================
+// --     To return an XML element that contains the "answer" attribute... just use 
+// --             glide_ajax_instance_var.getXML("Name of CallBack")
+// --  
+// --      And then in the call-back function.... access the 'answer' attribute via:
+// --             response.responseXML.documentElement.getAttribute('answer')
+// --
+// --      This works because the Response is a Self Contained XML Element that has several Attributes...
+// --      One of the Attributes will always be "answer".  It's value will always be the payload (the actual JSON returned or text or html , etc)
+// --      Example:    
+// --      <xml answer="<whatever you want.. JSON, Text, HTML, etc>" 
+// --           sysparm_max="15" 
+// --           sysparm_name="myFunctionNameToCall" 
+// --           sysparm_processor="myAjaxCallBackName" 
+// --      />
+//
+// --      In the example XML Response above,  the  "myAjaxCallBackName" is the String passed into the GlideAjax constructor...
+// --      The value of that string matches the name of a Javascript function that is defined in the client-side javascript.
+// --      Typically in the same location/scope as the function that is responsible for invoking the GlideAjax constructor
+//
+//
+// --  TO RETURN JSON FROM SCRIPT-INCLUDE
+// --  =====================================
+// --  On the client side use the call:
+// --  glide_ajax_instance_var.getXMLAnswer("Name of CallBack")
+// --       But the CallBack MUST be defined to accept a var called 'answer' (NOT A STRING but an actual OBJECT/VAR).
+// --       This 'answer' argument will be treated as JSON == a Javascript Object that has Key/Value Pairs, etc.
+// --       You can directly access the parts of the JSON Object just like any other JavaScript Object at this point in thime. 
+
+
+
+
+
+
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-12-18 18:48:16</sys_created_on>
+        <sys_id>cf51f784dba2230025651120399619f6</sys_id>
+        <sys_mod_count>15</sys_mod_count>
+        <sys_name>fetchUtils</sys_name>
+        <sys_package display_value="Fetch" source="x_237223_fetch">1e4b8440db22230025651120399619d3</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Fetch">1e4b8440db22230025651120399619d3</sys_scope>
+        <sys_update_name>sys_script_include_cf51f784dba2230025651120399619f6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-12-21 13:51:35</sys_updated_on>
+    </sys_script_include>
+</record_update>
