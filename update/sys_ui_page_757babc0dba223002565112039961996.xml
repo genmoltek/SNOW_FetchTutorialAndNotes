@@ -12,16 +12,20 @@
 	//You can pass as many of them as you like.. but they MUST use this PREFIX   'sysparm_"
 	//https://www.udemy.com/servicenow-201-development/learn/v4/t/lecture/7390440?start=0   timestamp approx 5min 7secs
 	
-	ga.addParam('sysparm_dog_name', JQuery('#dogName').val());
-	ga.addParam('sysparm_dog_age', JQuery('#dogAge').val());
-	ga.addParam('sysparm_dog_neutered', JQuery('#dogNeutered').is(':checked'));
-	ga.addParam('sysparm_dog_shots', JQuery('#dogShots').is(':checked'));
+	//ITS ALWAYS A SMALL Letter 'j' in the word jQuery.  DONT USE CAPS !!
+	//IT CAN FAIL SILENTLY AND NOT BE OBVIOUS WITHOUT CLOSE ATTENTION TO THE DEV CONSOLE IN THE BRWOSER...
+	ga.addParam('sysparm_dog_name', jQuery('#dogName').val());
+	ga.addParam('sysparm_dog_age', jQuery('#dogAge').val());
+	ga.addParam('sysparm_dog_neutered', jQuery('#dogNeutered').is(':checked'));
+	ga.addParam('sysparm_dog_shots', jQuery('#dogShots').is(':checked'));
 	ga.getXML(fetchBallback);
 });
 
 function fetchBallback(response) {
 	var answer = response.responseXML.documentElement.getAttribute('answer').split('|');
-	JQuery('#msg').append('<p>' + answer[0] + ' has successfully been created. Dog ID: ' + answer[1] 
+	//ITS ALWAYS A SMALL Letter 'j' in the word jQuery.  DONT USE CAPS !!
+	//IT CAN FAIL SILENTLY AND NOT BE OBVIOUS WITHOUT CLOSE ATTENTION TO THE DEV CONSOLE IN THE BRWOSER...
+	jQuery('#msg').append('<p>' + answer[0] + ' has successfully been created. Dog ID: ' + answer[1] 
 					   + '</p> <br/> <a href="' + answer[2] + '">View new dog</a>');
 	
 	//Instead of building a HTML Popup.. we could directly update a field in the form with the Returned Result..
@@ -91,13 +95,13 @@ function fetchBallback(response) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-12-18 18:30:20</sys_created_on>
         <sys_id>757babc0dba223002565112039961996</sys_id>
-        <sys_mod_count>13</sys_mod_count>
+        <sys_mod_count>15</sys_mod_count>
         <sys_name>Create Dog</sys_name>
         <sys_package display_value="Fetch" source="x_237223_fetch">1e4b8440db22230025651120399619d3</sys_package>
         <sys_policy/>
         <sys_scope display_value="Fetch">1e4b8440db22230025651120399619d3</sys_scope>
         <sys_update_name>sys_ui_page_757babc0dba223002565112039961996</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-12-20 18:21:15</sys_updated_on>
+        <sys_updated_on>2019-02-05 20:41:59</sys_updated_on>
     </sys_ui_page>
 </record_update>
